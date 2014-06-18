@@ -7,6 +7,7 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"strings"
 	"time"
 )
 
@@ -31,7 +32,7 @@ func main() {
 }
 func mgoInit() (session *mgo.Session, collection *mgo.Collection, err error) {
 	session, collection = nil, nil
-	server := os.Getenv("DB_PORT")
+	server := strings.Replace(os.Getenv("DB_PORT"), "tcp", "mongodb", 1)
 	if server == "" {
 		server = "localhost"
 	}
@@ -40,13 +41,13 @@ func mgoInit() (session *mgo.Session, collection *mgo.Collection, err error) {
 		log.Fatalf("Error connecting:  %v", err)
 		return
 	}
-	dbName := os.Getenv("DB_NAME")
+	dbName := strings.Replace(os.Getenv("DB_NAME"), "/", "", -1)
 	if dbName == "" {
 		dbName = "default"
 	}
 	c := os.Getenv("DB_COLLECTION")
 	if c == "" {
-		c = "hellworld"
+		c = "mycollection"
 	}
 	collection = session.DB(dbName).C(c)
 	return
